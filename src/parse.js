@@ -108,7 +108,14 @@ export const ParseMD = ( markdown, file, props ) => {
 						pluginPath = null;
 
 						// It could be an NPM module plugin name instead
-						if ( require.resolve( plugin ) ) {
+						let pluginResolved = null;
+						try {
+							pluginResolved = require.resolve( plugin );
+						}
+						catch( error ) {
+							// Do nothing
+						}
+						if ( pluginResolved ) {
 							pluginPath = plugin;
 						}
 					}

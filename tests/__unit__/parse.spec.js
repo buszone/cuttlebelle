@@ -121,6 +121,32 @@ Term 2
 });
 
 
+test('ParseMD() - Markdown ignores plugins which do not exist', () => {
+	SETTINGS.defaults.site.markdownPlugins = [
+		'tests/__unit__/mocks/markdownPluginNonExistent.js',
+		'markdown-it-non-existent'
+	];
+	const content2 = `
+### testing
+
+Term 1
+  ~ Definition 1
+
+Term 2
+  ~ Definition 2a
+  ~ Definition 2b
+`;
+	const match2 = `<h3 id="testing">testing</h3>
+<p>Term 1
+~ Definition 1</p>
+<p>Term 2
+~ Definition 2a
+~ Definition 2b</p>
+`;
+	expect( ParseMD( content2 ) ).toBe( match2 );
+});
+
+
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 // ParseYaml
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
