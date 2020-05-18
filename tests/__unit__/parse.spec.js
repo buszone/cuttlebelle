@@ -78,15 +78,45 @@ test('ParseMD() - Markdown is parsed', () => {
 });
 
 
-test('ParseMD() - Markdown takes the custom renderer', () => {
-	SETTINGS.defaults.site.markdownRenderer = 'tests/__unit__/mocks/customRenderer.js';
+test('ParseMD() - Markdown takes the custom plugins', () => {
+	SETTINGS.defaults.site.markdownPlugins = [
+		'tests/__unit__/mocks/markdownPluginHeading.js',
+		'tests/__unit__/mocks/markdownPluginMdash.js'
+	];
 	const content2 = `
 ### testing
 
 — no list
 - list
 `;
-	const match2 = '<h3>!testing!</h3><p>&mdash; no list</p>\n<ul>\n<li>list</li>\n</ul>\n';
+	const match2 = '<h3>!testing!</h3>\n<p>&mdash; no list</p>\n<ul>\n<li>list</li>\n</ul>\n';
+	expect( ParseMD( content2 ) ).toBe( match2 );
+});
+
+
+test('ParseMD() - Markdown takes an npm plugin', () => {
+	SETTINGS.defaults.site.markdownPlugins = [
+		'markdown-it-deflist' // This is included in devDependencies in package.json only for this test
+	];
+	const content2 = `
+### testing
+
+Term 1
+  ~ Definition 1
+
+Term 2
+  ~ Definition 2a
+  ~ Definition 2b
+`;
+	const match2 = `<h3 id="testing">testing</h3>
+<dl>
+<dt>Term 1</dt>
+<dd>Definition 1</dd>
+<dt>Term 2</dt>
+<dd>Definition 2a</dd>
+<dd>Definition 2b</dd>
+</dl>
+`;
 	expect( ParseMD( content2 ) ).toBe( match2 );
 });
 
